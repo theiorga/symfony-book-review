@@ -6,6 +6,7 @@ use App\Entity\Review;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ReviewType extends AbstractType
 {
@@ -17,7 +18,6 @@ class ReviewType extends AbstractType
             ->add('pages')
             ->add('summary')
             ->add('genre')
-            ->add('reviewer')
             ->add('review_text')
         ;
     }

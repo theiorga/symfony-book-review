@@ -7,9 +7,12 @@ use App\Form\ReviewType;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+
 
 #[Route('/review')]
 final class ReviewController extends AbstractController{
@@ -22,15 +25,22 @@ final class ReviewController extends AbstractController{
     }
 
     #[Route('/new', name: 'app_review_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
     {
         // Check if the user is logged in
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $this->addFlash('error', 'You need to be logged in to add a review.');
+            $this->addFlash('error', 'You need to be logged in to add a review. ');
             return $this->redirectToRoute('app_login');
         }
 
+        // Get the currently logged-in user
+        $user = $security->getUser();
+
         $review = new Review();
+
+        // Pre-set the reviewer's email
+        $review->setReviewer($user);
+
         $form = $this->createForm(ReviewType::class, $review);
         $form->handleRequest($request);
 
@@ -38,7 +48,7 @@ final class ReviewController extends AbstractController{
             $entityManager->persist($review);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_review_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_review_show', ['id' => $review->getId()]);
         }
 
         return $this->render('review/new.html.twig', [
@@ -58,10 +68,12 @@ final class ReviewController extends AbstractController{
     #[Route('/{id<\d+>}/edit', name: 'app_review_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Review $review, EntityManagerInterface $entityManager): Response
     {
-        // Check if the user is logged in
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $this->addFlash('error', 'You need to be logged in to edit a review.');
-            return $this->redirectToRoute('app_login');
+        // Check if the logged-in user has permission to edit the review
+        try {
+            $this->denyAccessUnlessGranted('edit', $review);
+        } catch (\Symfony\Component\Security\Core\Exception\AccessDeniedException $e) {
+            $this->addFlash('error', 'You are not allowed to edit this review. You can only edit your own reviews if you are logged in.');
+            return $this->redirectToRoute('app_review_index');
         }
 
         $form = $this->createForm(ReviewType::class, $review);
@@ -82,10 +94,12 @@ final class ReviewController extends AbstractController{
     #[Route('/{id<\d+>}', name: 'app_review_delete', methods: ['POST'])]
     public function delete(Request $request, Review $review, EntityManagerInterface $entityManager): Response
     {
-        // Check if the user is logged in
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $this->addFlash('error', 'You need to be logged in to delete a review.');
-            return $this->redirectToRoute('app_login');
+        // Check if the logged-in user has permission to edit the review
+        try {
+            $this->denyAccessUnlessGranted('delete', $review);
+        } catch (\Symfony\Component\Security\Core\Exception\AccessDeniedException $e) {
+            $this->addFlash('error', 'You are not allowed to delete this review. You can only delete your own reviews if you are logged in.');
+            return $this->redirectToRoute('app_review_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$review->getId(), $request->getPayload()->getString('_token'))) {

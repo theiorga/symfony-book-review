@@ -13,6 +13,13 @@
         {% endblock %}
     </head>
     <body>
+        {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label }}">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endfor %}
         {% block header %}
             <nav>
                 <ul style="list-style-type: none;">
@@ -26,7 +33,7 @@
                             </form> {# Logout button #}
                         </li>
                     {% else %}
-                        <form action="{{ path('app_login') }}" method="GET">
+                       <form action="{{ path('app_login') }}" method="GET">
                             <button type="submit">Log in</button>
                         </form>
                     {% endif %}

@@ -3,6 +3,8 @@
 {% block title %}Review index{% endblock %}
 
 {% block body %}
+
+
     <h1>Review index</h1>
 
     <table class="table">
@@ -15,7 +17,7 @@
                 <th>Summary</th>
                 <th>Genre</th>
                 <th>Reviewer</th>
-                <th>Review_text</th>
+                <th>Text</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -23,12 +25,12 @@
         {% for review in reviews %}
             <tr>
                 <td>{{ review.id }}</td>
-                <td>{{ review.title }}</td>
-                <td>{{ review.author }}</td>
-                <td>{{ review.pages }}</td>
-                <td>{{ review.summary }}</td>
-                <td>{{ review.genre }}</td>
-                <td>{{ review.reviewer }}</td>
+                <td>{{ review.book.title }}</td>
+                <td>{{ review.book.author }}</td>
+                <td>{{ review.book.pages }}</td>
+                <td>{{ review.book.summary }}</td>
+                <td>{{ review.book.genre }}</td>
+                <td>{{ review.reviewer.email }}</td>
                 <td>{{ review.reviewText }}</td>
                 <td>
                     <a href="{{ path('app_review_show', {'id': review.id}) }}">show</a>

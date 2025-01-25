@@ -14,23 +14,13 @@ class Review
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $reviewer = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $author = null;
-
-    #[ORM\Column]
-    private ?int $pages = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $summary = null;
-
-    #[ORM\Column(length: 128)]
-    private ?string $genre = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $reviewer = null;
+    #[ORM\ManyToOne(targetEntity: Book::class, inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Book $book = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $review_text = null;
@@ -40,74 +30,26 @@ class Review
         return $this->id;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(string $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
-    public function getPages(): ?int
-    {
-        return $this->pages;
-    }
-
-    public function setPages(int $pages): static
-    {
-        $this->pages = $pages;
-
-        return $this;
-    }
-
-    public function getSummary(): ?string
-    {
-        return $this->summary;
-    }
-
-    public function setSummary(?string $summary): static
-    {
-        $this->summary = $summary;
-
-        return $this;
-    }
-
-    public function getGenre(): ?string
-    {
-        return $this->genre;
-    }
-
-    public function setGenre(string $genre): static
-    {
-        $this->genre = $genre;
-
-        return $this;
-    }
-
-    public function getReviewer(): ?string
+    public function getReviewer(): ?User
     {
         return $this->reviewer;
     }
 
-    public function setReviewer(string $reviewer): static
+    public function setReviewer(?User $reviewer): static
     {
         $this->reviewer = $reviewer;
+
+        return $this;
+    }
+
+    public function getBook(): ?Book
+    {
+        return $this->book;
+    }
+
+    public function setBook(?Book $book): static
+    {
+        $this->book = $book;
 
         return $this;
     }
