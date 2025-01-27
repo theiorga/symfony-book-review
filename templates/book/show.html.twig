@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-5">Book: {{ book.title }}</h1>
+
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Title</div>
+            <div class="col-md-8">{{ book.title }}</div>
+        </div>
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Author</div>
+            <div class="col-md-8">{{ book.author }}</div>
+        </div>
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Pages</div>
+            <div class="col-md-8">{{ book.pages }}</div>
+        </div>
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Summary</div>
+            <div class="col-md-8">{{ book.summary }}</div>
+        </div>
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Genre</div>
+            <div class="col-md-8">{{ book.genre }}</div>
+        </div>
+
+        <hr>
+
+        <h2 class="text-center my-5">Reviews</h2>
+
+        {% if reviews is not empty %}
+            <div class="row">
+                {% for review in reviews %}
+                    <div class="col-12 mb-3">
+                        <div class="card">
+                            <div class="card-header">Reviewer: {{ review.reviewer.email }}</div>
+                            <div class="card-body">
+                                <p>{{ review.reviewText }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">No reviews available.</p>
+        {% endif %}
+
+        <div class="mt-5 d-flex justify-content-between">
+            <a href="{{ path('app_book_index') }}" class="btn btn-secondary">Back to Book List</a>
+            <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-primary">Edit</a>
+        </div>
+    </div>
+{% endblock %}

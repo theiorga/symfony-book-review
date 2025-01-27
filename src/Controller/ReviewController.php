@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Review;
 use App\Form\ReviewType;
+use App\Repository\BookRepository;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,9 +25,14 @@ final class ReviewController extends AbstractController{
         ]);
     }
 
-    #[Route('/new', name: 'app_review_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
-    {
+    #[Route('/new/{bookId<\d+>}', name: 'app_review_new', methods: ['GET', 'POST'])]
+    public function new(
+        int $bookId,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Security $security,
+        BookRepository $bookRepository
+    ): Response {
         // Check if the user is logged in
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             $this->addFlash('error', 'You need to be logged in to add a review. ');
@@ -36,11 +42,17 @@ final class ReviewController extends AbstractController{
         // Get the currently logged-in user
         $user = $security->getUser();
 
+        $book = $bookRepository->find($bookId);
+        if (!$book) {
+            throw $this->createNotFoundException('The requested book does not exist.');
+        }
+
         $review = new Review();
-
-        // Pre-set the reviewer's email
+        // Pre-set the reviewer's creator
         $review->setReviewer($user);
+        $review->setBook($book);
 
+        // Create and handle the form
         $form = $this->createForm(ReviewType::class, $review);
         $form->handleRequest($request);
 
@@ -54,6 +66,7 @@ final class ReviewController extends AbstractController{
         return $this->render('review/new.html.twig', [
             'review' => $review,
             'form' => $form,
+            'book' => $book,
         ]);
     }
 

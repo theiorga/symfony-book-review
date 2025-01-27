@@ -1,4 +1,16 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-4 col-lg-4">
+            {{ form_start(form, { 'attr': { 'class': 'form-floating' } }) }}
+            {{ form_errors(form) }}
+            <div class="form-floating mb-3">
+                {{ form_widget(form.review_text, { 'attr': { 'class': 'form-control'} }) }}
+                {{ form_label(form.review_text, 'Write your review here') }}
+            </div>
+            <button class="btn btn-primary w-100">Submit</button>
+
+        {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>

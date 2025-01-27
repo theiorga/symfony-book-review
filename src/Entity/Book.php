@@ -35,6 +35,9 @@ class Book
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'book', cascade: ['remove'], orphanRemoval: true)]
     private Collection $reviews;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
+    private ?User $createdBy = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -129,4 +132,17 @@ class Book
 
         return $this;
     }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
 }

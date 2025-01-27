@@ -13,7 +13,7 @@ final class LoginController extends AbstractController{
     {
         // If the user is already logged in, redirect to the 'app_review_index' route
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->redirectToRoute('app_review_index');
+            return $this->redirectToRoute('app_book_index');
         }
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();

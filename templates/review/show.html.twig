@@ -13,23 +13,23 @@
             </tr>
             <tr>
                 <th>Title</th>
-                <td>{{ review.title }}</td>
+                <td>{{ review.book.title }}</td>
             </tr>
             <tr>
                 <th>Author</th>
-                <td>{{ review.author }}</td>
+                <td>{{ review.book.author }}</td>
             </tr>
             <tr>
                 <th>Pages</th>
-                <td>{{ review.pages }}</td>
+                <td>{{ review.book.pages }}</td>
             </tr>
             <tr>
                 <th>Summary</th>
-                <td>{{ review.summary }}</td>
+                <td>{{ review.book.summary }}</td>
             </tr>
             <tr>
                 <th>Genre</th>
-                <td>{{ review.genre }}</td>
+                <td>{{ review.book.genre }}</td>
             </tr>
             <tr>
                 <th>Reviewer</th>
@@ -42,7 +42,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_review_index') }}">back to list</a>
+    <a href="{{ path('app_book_show', {'id': review.book.id}) }}">back to the book</a>
 
     <a href="{{ path('app_review_edit', {'id': review.id}) }}">edit</a>
 

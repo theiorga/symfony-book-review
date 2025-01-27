@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Book{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Add a new Book</h1>
+
+    {{ include('book/_form.html.twig') }}
+
+    {{ include('book/_back_to_list_btn.html.twig') }}
+{% endblock %}

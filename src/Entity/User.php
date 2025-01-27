@@ -26,38 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'reviewer')]
     private Collection $reviews;
 
-    public function __construct()
-    {
-        $this->reviews = new ArrayCollection();
-    }
-
-    public function getReviews(): Collection
-    {
-        return $this->reviews;
-    }
-
-    public function addReview(Review $review): static
-    {
-        if (!$this->reviews->contains($review)) {
-            $this->reviews->add($review);
-            $review->setReviewer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReview(Review $review): static
-    {
-        if ($this->reviews->removeElement($review)) {
-            // Set the owning side to null (unless already changed)
-            if ($review->getReviewer() === $this) {
-                $review->setReviewer(null);
-            }
-        }
-
-        return $this;
-    }
-
+    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'createdBy')]
+    private Collection $books;
 
     /**
      * @var list<string> The user roles
@@ -74,6 +44,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function __construct()
+    {
+        $this->reviews = new ArrayCollection();
+        $this->books = new ArrayCollection();
     }
 
     public function getEmail(): ?string
@@ -143,5 +119,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setReviewer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // Set the owning side to null (unless already changed)
+            if ($review->getReviewer() === $this) {
+                $review->setReviewer(null);
+            }
+        }
+
+        return $this;
+    }
+
+// Getter for books
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+// Add a book to the user
+    public function addBook(Book $book): static
+    {
+        if (!$this->books->contains($book)) {
+            $this->books->add($book);
+            $book->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+// Remove a book from the user
+    public function removeBook(Book $book): static
+    {
+        if ($this->books->removeElement($book)) {
+            // Set the owning side to null (unless already changed)
+            if ($book->getCreatedBy() === $this) {
+                $book->setCreatedBy(null);
+            }
+        }
+
+        return $this;
     }
 }
