@@ -5,7 +5,13 @@
 {% block body %}
     <div class="container mt-4">
         <h1 class="text-center mb-5">Book: {{ book.title }}</h1>
-
+        <div class="row justify-content-center">
+            <div class="col-10 col-md-8 col-lg-4 pb-5">
+                {% if book.imageFilename %}
+                     <img src="{{ asset('uploads/' ~ book.imageFilename)}}" class="img-fluid" width="100%" height="225" alt="Book cover image">
+                {% endif %}
+            </div>
+        </div>
         <div class="row mb-4 border-bottom pb-2">
             <div class="col-md-4 fw-bold">Title</div>
             <div class="col-md-8">{{ book.title }}</div>
@@ -26,10 +32,18 @@
             <div class="col-md-4 fw-bold">Genre</div>
             <div class="col-md-8">{{ book.genre }}</div>
         </div>
+        <div class="row mb-4 border-bottom pb-2">
+            <div class="col-md-4 fw-bold">Added by</div>
+            <div class="col-md-8">{{ book.createdBy.email }}</div>
+        </div>
+        {% if app.user and app.user.id == book.createdBy.id %}
+            <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-secondary">Edit</a>
+        {% endif %}
 
         <hr>
 
         <h2 class="text-center my-5">Reviews</h2>
+        <a href="{{ path('app_review_new', {'bookId':book.id}) }}" class="btn mb-3 btn-primary">Write a review</a>
 
         {% if reviews is not empty %}
             <div class="row">
@@ -37,20 +51,27 @@
                     <div class="col-12 mb-3">
                         <div class="card">
                             <div class="card-header">Reviewer: {{ review.reviewer.email }}</div>
+                            <div style="padding-right: 1rem;">
+                               <span class="float-end text-muted">{{ review.createdAt|date('d M Y H:i') }}</span>
+                            </div>
                             <div class="card-body">
                                 <p>{{ review.reviewText }}</p>
+                                {% if app.user and app.user.id == review.reviewer.id %}
+                                    <a href="{{ path('app_review_edit', {'id': review.id}) }}" class="btn btn-primary">Edit</a>
+                                    {{ include('review/_delete_form.html.twig') }}
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            <div class="mt-4 d-flex justify-content-center">
+                {{ knp_pagination_render(reviews) }}
+            </div>
         {% else %}
             <p class="text-center">No reviews available.</p>
         {% endif %}
 
-        <div class="mt-5 d-flex justify-content-between">
-            <a href="{{ path('app_book_index') }}" class="btn btn-secondary">Back to Book List</a>
-            <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-primary">Edit</a>
-        </div>
+        {{ include('_back_to_list_btn.html.twig') }}
     </div>
 {% endblock %}

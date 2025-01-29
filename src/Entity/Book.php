@@ -38,6 +38,9 @@ class Book
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
     private ?User $createdBy = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $imageFilename = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -142,6 +145,17 @@ class Book
     {
         $this->createdBy = $createdBy;
 
+        return $this;
+    }
+
+    public function getImageFilename(): ?string
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename(?string $imageFilename): self
+    {
+        $this->imageFilename = $imageFilename;
         return $this;
     }
 

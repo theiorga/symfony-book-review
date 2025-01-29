@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\SecurityFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,15 +16,22 @@ final class LoginController extends AbstractController{
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('app_book_index');
         }
-        // get the login error if there is one
+        // Get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
+        // Last entered username
         $lastUsername = $authenticationUtils->getLastUsername();
 
+        // Create the form without including "agreeTerms"
+        $form = $this->createForm(SecurityFormType::class, null, [
+            'include_terms' => false,
+        ]);
+
         return $this->render('login/index.html.twig', [
-            'last_username' => $lastUsername,
+            'loginForm' => $form->createView(),
             'error' => $error,
+            'lastUsername' => $lastUsername,
+            'include_terms' => false,
         ]);
     }
 

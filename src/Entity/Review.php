@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -24,6 +25,17 @@ class Review
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $review_text = null;
+
+    #[ORM\Column(type: 'datetime')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
+    private ?\DateTimeInterface $createdAt = null;
+
+    public function __construct()
+    {
+        // Automatically set createdAt when the review is created
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -65,4 +77,17 @@ class Review
 
         return $this;
     }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+
 }

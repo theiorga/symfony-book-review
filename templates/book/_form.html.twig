@@ -27,6 +27,10 @@
                     {{ form_widget(form.genre, { 'attr': { 'class': 'form-control'} }) }}
                     {{ form_label(form.genre, 'Specify the genre') }}
                 </div>
+                <div class="form-floating mb-3">
+                    {{ form_widget(form.imageFile, { 'attr': { 'class': 'form-control'} }) }}
+                    {{ form_label(form.imageFile, '(Optional) Upload an image of the book cover.') }}
+                </div>
 
                 <button class="btn btn-primary w-100">Submit</button>
             {{ form_end(form) }}

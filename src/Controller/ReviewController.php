@@ -60,7 +60,7 @@ final class ReviewController extends AbstractController{
             $entityManager->persist($review);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_review_show', ['id' => $review->getId()]);
+            return $this->redirectToRoute('app_book_show', ['id' => $book->getId()]);
         }
 
         return $this->render('review/new.html.twig', [
@@ -94,8 +94,8 @@ final class ReviewController extends AbstractController{
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_review_index', [], Response::HTTP_SEE_OTHER);
+            $book = $review->getBook();
+            return $this->redirectToRoute('app_book_show', ['id' => $book->getId()]);
         }
 
         return $this->render('review/edit.html.twig', [
@@ -114,12 +114,13 @@ final class ReviewController extends AbstractController{
             $this->addFlash('error', 'You are not allowed to delete this review. You can only delete your own reviews if you are logged in.');
             return $this->redirectToRoute('app_review_index');
         }
-
+        $id = $review->getBook()->getId();
         if ($this->isCsrfTokenValid('delete'.$review->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($review);
             $entityManager->flush();
         }
+        return $this->redirectToRoute('app_book_show', ['id' => $id], Response::HTTP_SEE_OTHER);
 
-        return $this->redirectToRoute('app_review_index', [], Response::HTTP_SEE_OTHER);
+
     }
 }

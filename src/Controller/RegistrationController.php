@@ -3,44 +3,55 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\RegistrationFormType;
+use App\Form\SecurityFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+
+        $form = $this->createForm(SecurityFormType::class, $user, ['include_terms' => true]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                $this->addFlash('danger', 'Email is already registered.');
+                return $this->redirectToRoute('app_register');
+            }
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            if ($form->isValid()) {
+                $user->setPassword(
+                    $passwordHasher->hashPassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            // do anything else you need here, like send an email
-
-            $this->addFlash('error', 'Thank you for registering. You can now log in.');
-            return $this->redirectToRoute('app_login',
-
-            );
+                $this->addFlash('success', 'Registration successful. Please log in.');
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
+            'registrationForm' => $form->createView(),
+            'errors' => ''
         ]);
     }
+
+
 }

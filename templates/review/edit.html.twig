@@ -5,9 +5,12 @@
 {% block body %}
     <h1>Edit Review</h1>
 
-    {{ include('review/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('review/_form.html.twig') }}
+    {{ include('_back_to_list_btn.html.twig') }}
 
-    <a href="{{ path('app_review_index') }}">back to list</a>
-
-    {{ include('review/_delete_form.html.twig') }}
+    <div class="row justify-content-center mt-3">
+        <div class="col-12 col-md-4 col-lg-4">
+            {{ include('review/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}
