@@ -1,31 +1,26 @@
-# Use official PHP 8.2 Apache image
-FROM php:8.2-apache
+# Use PHP with FPM
+FROM php:8.2-fpm
 
-# Install necessary PHP extensions
-RUN apt-get update && apt-get install -y \
-    unzip \
-    libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Set working directory
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy project files
-COPY . .
+# Install required PHP extensions
+RUN docker-php-ext-install pdo pdo_sqlite
+
+# Copy project files into the container
+COPY . /app
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set correct permissions
+RUN chown -R www-data:www-data /app/var /app/public/uploads
 
 # Install Symfony dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-WORKDIR app/public
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
 
-# Expose the default Apache port
-EXPOSE 80
-
-# Start Apache
-CMD ["apache2-foreground"]
+# Start PHP-FPM server
+CMD ["php-fpm"]
