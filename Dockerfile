@@ -19,8 +19,9 @@ COPY . /app
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set correct permissions
-RUN chown -R www-data:www-data /app/var /app/public/uploads
+# Ensure necessary directories exist before setting permissions
+RUN mkdir -p /app/var \
+    && chown -R www-data:www-data /app/var /app/public/uploads
 
 # Install Symfony dependencies
 RUN composer install --no-dev --optimize-autoloader
