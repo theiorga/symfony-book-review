@@ -4,10 +4,13 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies, including SQLite
+# Install system dependencies, including SQLite, Git, and Zip utilities
 RUN apt-get update && apt-get install -y \
     sqlite3 \
     libsqlite3-dev \
+    git \
+    zip \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install required PHP extensions
@@ -29,4 +32,5 @@ RUN composer install --no-dev --optimize-autoloader
 # Expose PHP-FPM port
 EXPOSE 9000
 
+# Start PHP-FPM
 CMD ["php-fpm"]
