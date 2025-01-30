@@ -1,0 +1,21 @@
+services:
+  - name: symfony-book-review
+    type: web
+    runtime: docker
+    region: oregon
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: DATABASE_URL
+        value: sqlite:///%kernel.project_dir%/var/data/data.db
+      - key: APP_SECRET
+        value: your_secret_here
+      - key: UPLOADS_DIR
+        value: /var/data/uploads
+    disk:
+      name: uploads-disk
+      mountPath: /var/data/uploads
+      sizeGB: 1
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: apache2-foreground
