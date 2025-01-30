@@ -1,8 +1,14 @@
-# Use PHP with FPM
+# Use PHP-FPM base image
 FROM php:8.2-fpm
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /app
+
+# Install system dependencies, including SQLite
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install required PHP extensions
 RUN docker-php-ext-install pdo pdo_sqlite
@@ -19,8 +25,7 @@ RUN chown -R www-data:www-data /app/var /app/public/uploads
 # Install Symfony dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 9000 for PHP-FPM
+# Expose PHP-FPM port
 EXPOSE 9000
 
-# Start PHP-FPM server
 CMD ["php-fpm"]
