@@ -15,9 +15,14 @@ class ReviewType extends AbstractType
     {
         $builder
             ->add('review_text', TextareaType::class, [
-                'attr' => ['placeholder' => ''],
-            ])
-        ;
+                'attr' => [
+                    'placeholder' => '.',
+                    'minlength' => 10, // HTML5 validation
+                    'maxlength' => 5000, // HTML5 validation
+                    'rows' => 5, // Adjusts textarea height
+                    'required' => true, // Client-side required
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

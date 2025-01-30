@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -21,7 +22,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "Email is required.")]
+    #[Assert\Email(message: "Please enter a valid email address.")]
     private ?string $email = null;
+
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
+    #[Assert\NotBlank(message: "Password cannot be empty.")]
+    #[Assert\Length(
+        min: 6,
+        max: 4096,
+        minMessage: "Password must be at least {{ limit }} characters long.",
+        maxMessage: "Password cannot exceed {{ limit }} characters."
+    )]
+    private ?string $password = null;
 
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'reviewer')]
     private Collection $reviews;
@@ -34,12 +50,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private array $roles = [];
-
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    private ?string $password = null;
 
     public function getId(): ?int
     {

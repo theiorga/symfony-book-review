@@ -24,6 +24,13 @@ class Review
     private ?Book $book = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "Review text cannot be empty.")]
+    #[Assert\Length(
+        min: 10,
+        max: 5000,
+        minMessage: "Your review must be at least {{ limit }} characters long.",
+        maxMessage: "Your review cannot exceed {{ limit }} characters."
+    )]
     private ?string $review_text = null;
 
     #[ORM\Column(type: 'datetime')]

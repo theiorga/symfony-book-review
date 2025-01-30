@@ -17,11 +17,22 @@ class SecurityFormType extends AbstractType
     {
         $builder
             ->add('email', TextType::class, [
-                'attr' => ['class' => 'form-control', 'placeholder' => ''],
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => '.',
+                    'type' => 'email', // Enforces client-side email format validation
+                    'required' => true, // HTML5 required
+                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
-                'attr' => ['class' => 'form-control', 'placeholder' => ''],
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => '.',
+                    'minlength' => 6, // Enforces minimum length in the browser
+                    'maxlength' => 4096, // Prevents excessively long passwords
+                    'required' => true, // HTML5 required
+                ],
             ]);
 
         if ($options['include_terms']) {
