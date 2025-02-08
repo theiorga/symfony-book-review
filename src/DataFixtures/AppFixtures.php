@@ -20,16 +20,17 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        /*for($i=0; $i<5; $i++){
+        for($i=0; $i<5; $i++){
             $user = new User();
             $user->setEmail('user'.$i.'@gmail.com');
             $user->setPassword($this->hasher->hashPassword($user, '123456'));
             $user->setRoles(['ROLE_USER']);
             $manager->persist($user);
-        } */
+        }
+        $manager->flush();
 
 
-        /* for ($i=40; $i <60; $i++){
+         for ($i=0; $i <60; $i++){
             $book = new Book();
             $book->setTitle('Book '.$i);
             $book->setAuthor('Author '.$i);
@@ -39,16 +40,20 @@ class AppFixtures extends Fixture
             $user = $manager->getRepository(User::class)->find('1');
             $book->setCreatedBy($user);
             $manager->persist($book);
-        } */
+        }
+        $manager->flush();
 
-        for ($i=0; $i <10; $i++){
+
+        for ($i=0; $i <10; $i++) {
             $review = new Review();
             $review->setReviewText('Review '.$i);
             $user = $manager->getRepository(User::class)->find('1');
             $review->setReviewer($user);
-            $book = $manager->getRepository(Book::class)->find('61');
+            $book = $manager->getRepository(Book::class)->find('59');
+            echo "Processing review for book:".$book->getId()."\n";
             $review->setBook($book);
             $manager->persist($review);
+
         }
 
         $manager->flush();

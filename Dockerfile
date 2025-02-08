@@ -1,29 +1,19 @@
-# Use official PHP 8.2 Apache image
-FROM php:8.2-apache
+FROM php:8.2.0-fpm
 
-# Install necessary PHP extensions
-RUN apt-get update && apt-get install -y \
-    unzip \
-    libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite
+WORKDIR /app
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+RUN apt-get update
 
-# Set working directory
-WORKDIR /var/www/html
+RUN apt-get -y install git zip libpq-dev
 
-# Copy project files
-COPY . .
+RUN apt-get install -y \
+      libxml2-dev \
+      && docker-php-ext-install xml
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
 
-# Install Symfony dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN curl -sL https://getcomposer.org/installer | php -- --install-dir /usr/bin --filename composer
 
-# Expose the default Apache port
-EXPOSE 80
+RUN pecl install xdebug
 
-# Start Apache
-CMD ["apache2-foreground"]
+CMD ["php-fpm"]
