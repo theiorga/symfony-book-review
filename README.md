@@ -38,7 +38,7 @@ A robust web application built with Symfony that allows users to create, view, e
 
 The app is deployed on an AWS EC2 instance. To test it, simply open your web browser and navigate to:
 
-[http://44.203.137.108/book](http://44.203.137.108/book)
+[http://44.203.137.108(http://44.203.137.108)
 
 > **Note:** The application is served over HTTP only, as HTTPS is not configured.
 
